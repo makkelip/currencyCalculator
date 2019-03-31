@@ -3,13 +3,17 @@ package com.example.laskin;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import java.util.ArrayList;
+
 public class CurrencyList extends ListActivity {
 
-    private static final String CURRENCIES = "currencies";
+    public static final String CURRENCIES = "currencies";
+    private static final String TAG = "CurrencyListActivity";
     private static final String SELECTION_INDEX = "index";
 
     @Override
@@ -17,15 +21,20 @@ public class CurrencyList extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_currency_list);
 
-        String[] currencies = getIntent().getStringArrayExtra(CURRENCIES);
+        try {
+            ArrayList<String> currencies = getIntent().getStringArrayListExtra(CURRENCIES);
 
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_list_item_1, //takes predefined list into use
-                currencies
-        );
+            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(
+                    this,
+                    android.R.layout.simple_list_item_1, //takes predefined list into use
+                    currencies
+            );
+            setListAdapter(arrayAdapter);
 
-        setListAdapter(arrayAdapter);
+        } catch (Exception e) {
+            Log.e(TAG, e.toString());
+            finish();
+        }
     }
 
     @Override

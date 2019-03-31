@@ -1,7 +1,7 @@
 package com.example.laskin;
 
-import android.app.ListActivity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -11,12 +11,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG = "MainActivity";
     private static final int LIST_REQ_CODE = 1;
-    private static final String CURRENCIES = "currencies";
     private static final String SELECTION_INDEX = "index";
-    private static final String[] currencies = new String[] {"USD", "HUF", "GBP"};
+
+    private ArrayList<Currency> currencyList;
+    private DatabaseAdapter dbAdapter = new DatabaseAdapter(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +29,9 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        dbAdapter.open();
+        initDatabase();
+        updateCurrencies();
     }
 
     @Override
@@ -56,22 +63,32 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         //If the closing activity was Currency list
-        if (requestCode == LIST_REQ_CODE) {
-            int currencyIndex = data.getIntExtra(SELECTION_INDEX, -1);
-            if (currencyIndex >= 0) {
-                Toast t = Toast.makeText(this, Integer.toString(currencyIndex), Toast.LENGTH_SHORT);
-                t.show();
+        if (resultCode == RESULT_OK)
+            if (requestCode == LIST_REQ_CODE) {
+                int currencyIndex = data.getIntExtra(SELECTION_INDEX, -1);
+                if (currencyIndex >= 0) {
+                    Toast t = Toast.makeText(this, Integer.toString(currencyIndex), Toast.LENGTH_SHORT);
+                    t.show();
+                }
             }
-        } else
-            Toast.makeText(this, "HMM", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        dbAdapter.close();
     }
 
     public void openListActivity() {
         //Create intent to start CurrencyList activity
         Intent listIntent = new Intent(this, CurrencyList.class);
-        //Add list information
-        listIntent.putExtra(CURRENCIES, currencies);
 
+        //Add list information
+        ArrayList<String> currencyNameList = new ArrayList<>();
+        for (Currency c : currencyList)
+            currencyNameList.add(c.getName());
+
+        listIntent.putExtra(CurrencyList.CURRENCIES, currencyNameList);
         startActivityForResult(listIntent, LIST_REQ_CODE);
     }
 
@@ -80,5 +97,26 @@ public class MainActivity extends AppCompatActivity {
     public void toastMe(View view) {
         Toast myToast = Toast.makeText(this, "Hello toast!", Toast.LENGTH_SHORT);
         myToast.show();
+    }
+
+    //Adding some data to database
+    private void initDatabase() {
+        dbAdapter.open();
+        dbAdapter.clearDatabase();
+        dbAdapter.insertCurrency("KR",
+                "10.231",
+                "26.03.2019");
+        dbAdapter.insertCurrency(
+                "GBP",
+                "0.844",
+                "26.03.2019");
+        dbAdapter.insertCurrency(
+                "SEK",
+                "9.47",
+                "26.03.2019");
+    }
+
+    private void updateCurrencies() {
+        currencyList = dbAdapter.getAllCurrencies();
     }
 }
