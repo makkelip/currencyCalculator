@@ -3,6 +3,7 @@ package com.example.laskin;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -12,13 +13,17 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final int LIST_REQ_CODE = 1;
+    private static final String CURRENCIES = "currencies";
+    private static final String SELECTION_INDEX = "index";
+    private static final String[] currencies = new String[] {"USD", "HUF", "GBP"};
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
 
     }
 
@@ -46,10 +51,30 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void openListActivity() {
-        Intent listIntent = new Intent(this, CurrencyList.class);
-        startActivity(listIntent);
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        //If the closing activity was Currency list
+        if (requestCode == LIST_REQ_CODE) {
+            int currencyIndex = data.getIntExtra(SELECTION_INDEX, -1);
+            if (currencyIndex >= 0) {
+                Toast t = Toast.makeText(this, Integer.toString(currencyIndex), Toast.LENGTH_SHORT);
+                t.show();
+            }
+        } else
+            Toast.makeText(this, "HMM", Toast.LENGTH_SHORT).show();
     }
+
+    public void openListActivity() {
+        //Create intent to start CurrencyList activity
+        Intent listIntent = new Intent(this, CurrencyList.class);
+        //Add list information
+        listIntent.putExtra(CURRENCIES, currencies);
+
+        startActivityForResult(listIntent, LIST_REQ_CODE);
+    }
+
 
     //Function for testing buttons
     public void toastMe(View view) {
