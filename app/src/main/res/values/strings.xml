@@ -9,4 +9,5 @@
     <string name="input_hint">Ammount to convert</string>
     <string name="calculate_btn_text">Calculate</string>
     <string name="action_list_name">List</string>
+    <string name="ammountText">Ammount</string>
 </resources>

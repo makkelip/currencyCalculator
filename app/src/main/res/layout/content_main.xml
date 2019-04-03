@@ -27,13 +27,13 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
 
         <EditText
-            android:id="@+id/input"
+            android:id="@+id/upperInput"
             style="@style/Widget.AppCompat.EditText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:autofillHints=""
             android:ems="10"
-            android:hint="@string/input_hint"
+            android:hint="@string/ammountText"
             android:inputType="numberDecimal"
             tools:targetApi="o" />
 
@@ -44,11 +44,22 @@
             android:text="@string/usd_text"
             android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
 
+        <EditText
+            android:id="@+id/lowerInput"
+            style="@style/Widget.AppCompat.EditText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:autofillHints=""
+            android:ems="10"
+            android:hint="@string/ammountText"
+            android:inputType="numberDecimal"
+            tools:targetApi="o" />
+
         <Button
             android:id="@+id/calculateButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:onClick="toastMe"
+            android:onClick="onCalculate"
             android:text="@string/calculate_btn_text" />
 
     </LinearLayout>

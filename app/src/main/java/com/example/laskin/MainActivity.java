@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -22,12 +23,18 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Currency> currencyList;
     private DatabaseAdapter dbAdapter = new DatabaseAdapter(this);
 
+    private EditText upperEditText;
+    private EditText lowerEditText;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        upperEditText = findViewById(R.id.upperInput);
+        lowerEditText = findViewById(R.id.lowerInput);
 
         dbAdapter.open();
         initDatabase();
@@ -92,6 +99,20 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(listIntent, LIST_REQ_CODE);
     }
 
+    public void onCalculate(View view) {
+        double value;
+        if (upperEditText.hasFocus()) {
+            value = Double.parseDouble(upperEditText.getText().toString());
+            double newValue = value * 2.5;
+            lowerEditText.setText(Double.toString(newValue));
+        } else if (lowerEditText.hasFocus()) {
+            value = Double.parseDouble(lowerEditText.getText().toString());
+            double newValue = value * 2.5;
+            upperEditText.setText(Double.toString(newValue));
+        } else {
+            Toast.makeText(this, "Focus on field to calculate", Toast.LENGTH_SHORT);
+        }
+    }
 
     //Function for testing buttons
     public void toastMe(View view) {
