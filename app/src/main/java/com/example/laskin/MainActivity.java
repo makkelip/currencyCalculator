@@ -10,9 +10,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,8 +26,10 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Currency> currencyList;
     private DatabaseAdapter dbAdapter = new DatabaseAdapter(this);
 
+    private TextView lowerText;
     private EditText upperEditText;
     private EditText lowerEditText;
+    private Currency activeCurrency;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,12 +38,14 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        lowerText = findViewById(R.id.lowerCurrText);
         upperEditText = findViewById(R.id.upperInput);
         lowerEditText = findViewById(R.id.lowerInput);
 
         dbAdapter.open();
         initDatabase();
         updateCurrencies();
+        setActiveCurrency(currencyList.get(0));
     }
 
     @Override
@@ -74,8 +81,7 @@ public class MainActivity extends AppCompatActivity {
             if (requestCode == LIST_REQ_CODE) {
                 int currencyIndex = data.getIntExtra(SELECTION_INDEX, -1);
                 if (currencyIndex >= 0) {
-                    Toast t = Toast.makeText(this, Integer.toString(currencyIndex), Toast.LENGTH_SHORT);
-                    t.show();
+                    setActiveCurrency(currencyList.get(currencyIndex));
                 }
             }
     }
@@ -100,18 +106,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onCalculate(View view) {
-        double value;
         if (upperEditText.hasFocus()) {
-            value = Double.parseDouble(upperEditText.getText().toString());
-            double newValue = value * 2.5;
-            lowerEditText.setText(Double.toString(newValue));
+            double value = Double.parseDouble(upperEditText.getText().toString());
+            value *= activeCurrency.getRelation();
+            lowerEditText.setText(String.format(Locale.US,"%.3f", value));
         } else if (lowerEditText.hasFocus()) {
-            value = Double.parseDouble(lowerEditText.getText().toString());
-            double newValue = value * 2.5;
-            upperEditText.setText(Double.toString(newValue));
+            double value = Double.parseDouble(lowerEditText.getText().toString());
+            value /= activeCurrency.getRelation();
+            upperEditText.setText(String.format(Locale.US,"%.3f", value));
         } else {
-            Toast.makeText(this, "Focus on field to calculate", Toast.LENGTH_SHORT);
+            Toast.makeText(
+                    this,
+                    "Focus on field to calculate",
+                    Toast.LENGTH_SHORT
+            ).show();
         }
+    }
+
+    private void setActiveCurrency(Currency c) {
+        activeCurrency = c;
+        lowerText.setText(activeCurrency.getName());
+        lowerEditText.setText("");
     }
 
     //Function for testing buttons
