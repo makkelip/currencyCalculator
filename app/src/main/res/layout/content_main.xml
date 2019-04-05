@@ -62,6 +62,13 @@
             android:onClick="onCalculate"
             android:text="@string/calculate_btn_text" />
 
+        <Button
+            android:id="@+id/test"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="test"
+            android:text="@string/testText" />
+
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

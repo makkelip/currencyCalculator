@@ -11,7 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".CurrencyList">Currency</activity>
+        <activity android:name=".CurrencyList"></activity>
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
