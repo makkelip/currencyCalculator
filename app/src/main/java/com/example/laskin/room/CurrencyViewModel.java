@@ -16,10 +16,12 @@ public class CurrencyViewModel extends AndroidViewModel {
     public CurrencyViewModel (Application application) {
         super(application);
         mRepository = new CurrencyRepository(application);
-        mAllCurrencies = mRepository.getAllCurrencies();
+        mAllCurrencies = mRepository.getAllCurrenciesLive();
     }
 
     public LiveData<List<Currency>> getAllCurrencies() { return mAllCurrencies; }
+
+    public void setActiveCurrency(int id) { }
 
     public void insert(Currency c) { mRepository.insert(c); }
 

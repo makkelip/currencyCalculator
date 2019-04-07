@@ -1,8 +1,8 @@
 package com.example.laskin;
 
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -17,8 +17,6 @@ import android.widget.Toast;
 import com.example.laskin.entity.Currency;
 import com.example.laskin.room.CurrencyViewModel;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
@@ -32,7 +30,6 @@ public class MainActivity extends AppCompatActivity {
     private EditText lowerEditText;
 
     private CurrencyViewModel currencyViewModel;
-
     private Currency activeCurrency;
 
     @Override
@@ -46,7 +43,6 @@ public class MainActivity extends AppCompatActivity {
         upperEditText = findViewById(R.id.upperInput);
         lowerEditText = findViewById(R.id.lowerInput);
 
-        List<Currency> currencyList;
         currencyViewModel = ViewModelProviders.of(this).get(CurrencyViewModel.class);
 
     }
@@ -84,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
             if (requestCode == LIST_REQ_CODE) {
                 int currencyIndex = data.getIntExtra(SELECTION_INDEX, -1);
                 if (currencyIndex >= 0) {
-                    setActiveCurrency(currencyList.getValue().get(currencyIndex));
+                    //SET CURR
                 }
             }
     }
@@ -94,22 +90,17 @@ public class MainActivity extends AppCompatActivity {
         Intent listIntent = new Intent(this, CurrencyList.class);
 
         //Add list information
-        ArrayList<String> currencyNameList = new ArrayList<>();
-        for (Currency c : currencyList.getValue())
-            currencyNameList.add(c.getCurrencyName());
 
-        listIntent.putExtra(CurrencyList.CURRENCIES, currencyNameList);
-        startActivityForResult(listIntent, LIST_REQ_CODE);
     }
 
     public void onCalculate(View view) {
         if (upperEditText.hasFocus()) {
             double value = Double.parseDouble(upperEditText.getText().toString());
-            value *= activeCurrency.getCurrencyRelation();
+            //value *= activeCurrency.getCurrencyRelation();
             lowerEditText.setText(String.format(Locale.US,"%.3f", value));
         } else if (lowerEditText.hasFocus()) {
             double value = Double.parseDouble(lowerEditText.getText().toString());
-            value /= activeCurrency.getCurrencyRelation();
+            //value /= activeCurrency.getCurrencyRelation();
             upperEditText.setText(String.format(Locale.US,"%.3f", value));
         } else {
             Toast.makeText(
@@ -121,19 +112,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setActiveCurrency(Currency c) {
-        activeCurrency = c;
-        lowerText.setText(activeCurrency.getCurrencyName());
-        lowerEditText.setText("");
+        if (c != null) {
+            activeCurrency = c;
+            lowerText.setText(activeCurrency.getCurrencyName());
+            lowerEditText.setText("");
+        } else {
+            Toast.makeText(this, "Null currency", Toast.LENGTH_SHORT);
+        }
     }
 
     //Function for testing buttons
     public void test(View view) {
-        Toast myToast = Toast.makeText(this, "BOO", Toast.LENGTH_SHORT);
-        myToast.show();
-    }
-
-    //Adding some data to database
-    private void initDatabase() {
 
     }
 }

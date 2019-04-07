@@ -30,7 +30,25 @@ public class CurrencyRepository {
 
     public void delete (String name) { new deleteAsyncTask(mCurrencyDao).execute(name); }
 
-    private static class insertAsyncTask extends android.os.AsyncTask<Currency, Void, Void> {
+    public AsyncTask<Integer, Void, Currency> getCurrencyById(int id) {
+        return new getAsyncTask(mCurrencyDao).execute(id);
+    }
+
+    private static class getAsyncTask extends AsyncTask<Integer, Void, Currency> {
+        private CurrencyDao mAsyncTaskDao;
+        getAsyncTask(CurrencyDao dao) {
+            mAsyncTaskDao = dao;
+        }
+        Currency currency;
+
+        @Override
+        protected Currency doInBackground(final Integer... params) {
+            currency = mAsyncTaskDao.getCurrencyById(params[0]);
+            return currency;
+        }
+    }
+
+    private static class insertAsyncTask extends AsyncTask<Currency, Void, Void> {
         private CurrencyDao mAsyncTaskDao;
         insertAsyncTask(CurrencyDao dao) {
             mAsyncTaskDao = dao;
