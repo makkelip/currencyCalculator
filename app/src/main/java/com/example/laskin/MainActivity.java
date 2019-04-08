@@ -2,22 +2,16 @@ package com.example.laskin;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.example.laskin.entity.Currency;
 import com.example.laskin.room.CurrencyViewModel;
-
-import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -25,12 +19,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int LIST_REQ_CODE = 1;
     private static final String SELECTION_INDEX = "index";
 
-    private TextView lowerText;
-    private EditText upperEditText;
-    private EditText lowerEditText;
-
     private CurrencyViewModel currencyViewModel;
-    private Currency activeCurrency;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,12 +28,27 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        lowerText = findViewById(R.id.lowerCurrText);
-        upperEditText = findViewById(R.id.upperInput);
-        lowerEditText = findViewById(R.id.lowerInput);
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        Fragment calculatorFragment = new CalculatorFragment();
+        fragmentTransaction.add(R.id.fragment_container, calculatorFragment);
+        //fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
+
 
         currencyViewModel = ViewModelProviders.of(this).get(CurrencyViewModel.class);
 
+        /*
+        CalculatorFragment newFragment = new CalculatorFragment();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        // Replace whatever is in the fragment_container view with this fragment,
+        // and add the transaction to the back stack so the user can navigate back
+        transaction.replace(R.id.fragmentContainer, newFragment);
+        //transaction.addToBackStack(null); // to get back from ListFragment
+        // Commit the transaction
+        transaction.commit();
+        */
     }
 
     @Override
@@ -90,39 +94,6 @@ public class MainActivity extends AppCompatActivity {
         Intent listIntent = new Intent(this, CurrencyList.class);
 
         //Add list information
-
-    }
-
-    public void onCalculate(View view) {
-        if (upperEditText.hasFocus()) {
-            double value = Double.parseDouble(upperEditText.getText().toString());
-            //value *= activeCurrency.getCurrencyRelation();
-            lowerEditText.setText(String.format(Locale.US,"%.3f", value));
-        } else if (lowerEditText.hasFocus()) {
-            double value = Double.parseDouble(lowerEditText.getText().toString());
-            //value /= activeCurrency.getCurrencyRelation();
-            upperEditText.setText(String.format(Locale.US,"%.3f", value));
-        } else {
-            Toast.makeText(
-                    this,
-                    "Focus on field to calculate",
-                    Toast.LENGTH_SHORT
-            ).show();
-        }
-    }
-
-    private void setActiveCurrency(Currency c) {
-        if (c != null) {
-            activeCurrency = c;
-            lowerText.setText(activeCurrency.getCurrencyName());
-            lowerEditText.setText("");
-        } else {
-            Toast.makeText(this, "Null currency", Toast.LENGTH_SHORT);
-        }
-    }
-
-    //Function for testing buttons
-    public void test(View view) {
 
     }
 }

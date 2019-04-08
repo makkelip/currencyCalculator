@@ -7,68 +7,16 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".MainActivity"
-    tools:showIn="@layout/activity_main" >
+    tools:showIn="@layout/activity_main">
 
-    <LinearLayout
-        android:id="@+id/calculatorLayout"
+    <FrameLayout
+        android:id="@+id/fragment_container"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp"
+        android:layout_height="match_parent"
+        android:layout_marginTop="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/upperCurrText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/euro_text"
-            android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
-
-        <EditText
-            android:id="@+id/upperInput"
-            style="@style/Widget.AppCompat.EditText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:autofillHints=""
-            android:ems="10"
-            android:hint="@string/ammountText"
-            android:inputType="numberDecimal"
-            tools:targetApi="o" />
-
-        <TextView
-            android:id="@+id/lowerCurrText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/usd_text"
-            android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
-
-        <EditText
-            android:id="@+id/lowerInput"
-            style="@style/Widget.AppCompat.EditText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:autofillHints=""
-            android:ems="10"
-            android:hint="@string/ammountText"
-            android:inputType="numberDecimal"
-            tools:targetApi="o" />
-
-        <Button
-            android:id="@+id/calculateButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="onCalculate"
-            android:text="@string/calculate_btn_text" />
-
-        <Button
-            android:id="@+id/test"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="test"
-            android:text="@string/testText" />
-
-    </LinearLayout>
-
+    </FrameLayout>
 </android.support.constraint.ConstraintLayout>
