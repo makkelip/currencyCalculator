@@ -21,8 +21,8 @@ public interface CurrencyDao {
     @Query("SELECT * from currencies ORDER BY currencyName ASC")
     LiveData<List<Currency>> getAllCurrencies();
 
-    @Query("SELECT * from currencies WHERE currencyId=:id")
-    Currency getCurrencyById(int id);
+    @Query("SELECT * from currencies WHERE currencyId=2")
+    LiveData<Currency> getCurrencyById();
 
     @Query("DELETE FROM currencies WHERE currencyName=:name")
     void delete(String name);

@@ -1,6 +1,5 @@
 package com.example.laskin;
 
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,15 +10,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import com.example.laskin.room.CurrencyViewModel;
+
+import com.example.laskin.ListFragment.CurrencyListFragment;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
     private static final int LIST_REQ_CODE = 1;
     private static final String SELECTION_INDEX = "index";
-
-    private CurrencyViewModel currencyViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,12 +30,9 @@ public class MainActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         Fragment calculatorFragment = new CalculatorFragment();
-        fragmentTransaction.add(R.id.fragment_container, calculatorFragment);
+        fragmentTransaction.add(R.id.content_main, calculatorFragment);
         //fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
-
-
-        currencyViewModel = ViewModelProviders.of(this).get(CurrencyViewModel.class);
 
         /*
         CalculatorFragment newFragment = new CalculatorFragment();
@@ -67,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_list) {
-            openListActivity();
+            openListFragment();
         } else if (id == R.id.action_settings) {
             return true;
         }
@@ -89,11 +84,11 @@ public class MainActivity extends AppCompatActivity {
             }
     }
 
-    public void openListActivity() {
-        //Create intent to start CurrencyList activity
-        Intent listIntent = new Intent(this, CurrencyList.class);
+    public void openListFragment() {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        CurrencyListFragment listFragment = new CurrencyListFragment();
 
-        //Add list information
-
+        transaction.addToBackStack(null);
+        transaction.add(R.id.content_main, listFragment).commit();
     }
 }
