@@ -18,14 +18,16 @@ public class CurrencyViewModel extends AndroidViewModel {
         super(application);
         mRepository = new CurrencyRepository(application);
         mAllCurrencies = mRepository.getAllCurrenciesLive();
-        activeCurrency = mRepository.getCurrencyById();
     }
 
     public LiveData<List<Currency>> getAllCurrencies() { return mAllCurrencies; }
 
+    public Currency getCurrencyById() {
+        return mRepository.getCurrencyById();
+    }
     public void insert(Currency c) { mRepository.insert(c); }
 
-    public void delete(String name) { mRepository.delete(name); }
+    public void delete(int id) { mRepository.delete(id); }
 
     public LiveData<Currency> getActiveCurrency() {
         return activeCurrency;

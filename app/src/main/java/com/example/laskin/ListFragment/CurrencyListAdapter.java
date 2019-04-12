@@ -66,4 +66,8 @@ public class CurrencyListAdapter extends RecyclerView.Adapter<CurrencyListAdapte
     public String getName(View itemView) {
         return ((TextView) itemView.findViewById(R.id.title)).getText().toString();
     }
+
+    public Currency getCurrency(int index) {
+        return mCurrencyList.get(index);
+    }
 }

@@ -4,8 +4,10 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
+import java.io.Serializable;
+
 @Entity(tableName = "currencies")
-public class Currency {
+public class Currency implements Serializable {
     @PrimaryKey(autoGenerate = true)
     private int currencyId;
 

@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:autofillHints=""
         android:ems="10"
-        android:hint="@string/ammountText"
+        android:hint="@string/amountText"
         android:inputType="numberDecimal"
         tools:targetApi="o" />
 
@@ -30,7 +30,7 @@
         android:id="@+id/lowerTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/usd_text"
+        android:text="@string/lower_calc_text"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
 
     <EditText
@@ -40,7 +40,7 @@
         android:layout_height="wrap_content"
         android:autofillHints=""
         android:ems="10"
-        android:hint="@string/ammountText"
+        android:hint="@string/amountText"
         android:inputType="numberDecimal"
         tools:targetApi="o" />
 

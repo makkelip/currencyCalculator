@@ -28,10 +28,24 @@ public class CurrencyRepository {
         new insertAsyncTask(mCurrencyDao).execute(c);
     }
 
-    public void delete (String name) { new deleteAsyncTask(mCurrencyDao).execute(name); }
+    public void delete (int id) { new deleteAsyncTask(mCurrencyDao).execute(id); }
 
-    public LiveData<Currency> getCurrencyById() {
+    public Currency getCurrencyById() {
         return mCurrencyDao.getCurrencyById();
+    }
+
+    private static class getCurrencyAsyncTask extends AsyncTask<Integer, Void, Currency> {
+
+        private CurrencyDao mAsyncTaskDao;
+
+        getCurrencyAsyncTask(CurrencyDao dao) {
+            mAsyncTaskDao = dao;
+        }
+
+        @Override
+        protected Currency doInBackground(final Integer... params) {
+            return mAsyncTaskDao.getCurrencyById();
+        }
     }
 
     private static class insertAsyncTask extends AsyncTask<Currency, Void, Void> {
@@ -46,7 +60,7 @@ public class CurrencyRepository {
         }
     }
 
-    private static class deleteAsyncTask extends AsyncTask<String, Void, Void> {
+    private static class deleteAsyncTask extends AsyncTask<Integer, Void, Void> {
 
         private CurrencyDao mAsyncTaskDao;
 
@@ -55,7 +69,7 @@ public class CurrencyRepository {
         }
 
         @Override
-        protected Void doInBackground(final String... params) {
+        protected Void doInBackground(final Integer... params) {
             mAsyncTaskDao.delete(params[0]);
             return null;
         }

@@ -1,6 +1,5 @@
 package com.example.laskin.ListFragment;
 
-import android.app.FragmentManager;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,18 +13,18 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.laskin.CalculatorFragment;
+import com.example.laskin.MainActivity;
 import com.example.laskin.R;
-import com.example.laskin.dummy.DummyContent.DummyItem;
+import com.example.laskin.entity.Currency;
 import com.example.laskin.room.CurrencyViewModel;
 
 /**
  * A fragment representing a list of Items.
  * <p/>
- * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
- * interface.
  */
 public class CurrencyListFragment extends Fragment {
 
+    public static final String TAG = "CurrencyListFragment";
     private CurrencyListAdapter listAdapter;
     private CurrencyViewModel mViewModel;
     private RecyclerView recyclerView;
@@ -40,7 +39,6 @@ public class CurrencyListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
@@ -59,19 +57,25 @@ public class CurrencyListFragment extends Fragment {
         linearLayoutManager.setOrientation(RecyclerView.VERTICAL);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(listAdapter);
+
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), recyclerView,
                 new RecyclerTouchListener.ClickListener() {
                     @Override
                     public void onClick(View view, int position) {
-                        // TODO: Change currency in calculator
-                        Toast.makeText(getContext(), Integer.toString(position), Toast.LENGTH_SHORT).show();
+                        Currency currency = listAdapter.getCurrency(position);
+                        try {
+                            MainActivity main = (MainActivity)getActivity();
+                            main.openCalculatorFragment(currency);
+                        } catch (Exception e) {
+                            throw new ClassCastException(getActivity().toString() + "Activity is other than MainActivity");
+                        }
                     }
 
                     @Override
                     public void onLongClick(View view, int position) {
-                        String name = listAdapter.getName(view);
-                        Toast.makeText(getContext(), "Currency deleted " + name, Toast.LENGTH_LONG).show();
-                        // TODO: Delete currency
+                        int id = listAdapter.getCurrency(position).getCurrencyId();
+                        mViewModel.delete(id);
+                        Toast.makeText(getContext(), "Currency deleted " + id, Toast.LENGTH_LONG).show();
                     }
         }));
 
@@ -84,20 +88,5 @@ public class CurrencyListFragment extends Fragment {
 
         transaction.addToBackStack(null);
         transaction.replace(R.id.content_main, calculatorFragment).commit();
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyItem item);
     }
 }

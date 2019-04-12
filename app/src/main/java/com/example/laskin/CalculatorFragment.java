@@ -1,10 +1,9 @@
 package com.example.laskin;
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +18,10 @@ import com.example.laskin.room.CurrencyViewModel;
 import java.util.Locale;
 
 public class CalculatorFragment extends Fragment {
+
+
+    public static final String ACTIVE_CURRENCY = "active_currency";
+    private static final String TAG = "CalculatorFragment";
 
     private CurrencyViewModel viewModel;
 
@@ -49,12 +52,13 @@ public class CalculatorFragment extends Fragment {
         Button calculateButton = view.findViewById(R.id.calculateButton);
         calculateButton.setOnClickListener(v -> onCalculate(v));
 
-        final Observer<Currency> currencyObserver = currency -> {
-            if (currency != null)
-                lowerText.setText(currency.getCurrencyName());
-        };
-
-        viewModel.getActiveCurrency().observe(getViewLifecycleOwner(), currencyObserver);
+        //Set active currency
+        if (getArguments().getSerializable(ACTIVE_CURRENCY) != null) {
+            activeCurrency = (Currency) getArguments().getSerializable(ACTIVE_CURRENCY);
+            lowerText.setText(activeCurrency.getCurrencyName());
+        } else {
+            Log.e(TAG, "No active currency given in arguments");
+        }
 
         return view;
     }
@@ -64,14 +68,29 @@ public class CalculatorFragment extends Fragment {
     }
 
     public void onCalculate(View view) {
+        if (activeCurrency == null) {
+            Toast.makeText(
+                    getContext(),
+                    "Unable to calculate. Currency missing",
+                    Toast.LENGTH_SHORT
+            ).show();
+            return;
+        }
+        String editText;
         if (upperEditText.hasFocus()) {
-            double value = Double.parseDouble(upperEditText.getText().toString());
-            value *= activeCurrency.getCurrencyRelation();
-            lowerEditText.setText(String.format(Locale.US,"%.3f", value));
+            editText = upperEditText.getText().toString();
+            if (!editText.matches("")) {
+                double value = Double.parseDouble(editText);
+                value *= activeCurrency.getCurrencyRelation();
+                lowerEditText.setText(String.format(Locale.US,"%.3f", value));
+            }
         } else if (lowerEditText.hasFocus()) {
-            double value = Double.parseDouble(lowerEditText.getText().toString());
-            value /= activeCurrency.getCurrencyRelation();
-            upperEditText.setText(String.format(Locale.US,"%.3f", value));
+            editText = lowerEditText.getText().toString();
+            if (!editText.matches("")) {
+                double value = Double.parseDouble(lowerEditText.getText().toString());
+                value /= activeCurrency.getCurrencyRelation();
+                upperEditText.setText(String.format(Locale.US, "%.3f", value));
+            }
         } else {
             Toast.makeText(
                     getContext(),

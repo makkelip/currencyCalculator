@@ -3,8 +3,6 @@ package com.example.laskin;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -12,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.laskin.ListFragment.CurrencyListFragment;
+import com.example.laskin.entity.Currency;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,24 +25,8 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        Fragment calculatorFragment = new CalculatorFragment();
-        fragmentTransaction.add(R.id.content_main, calculatorFragment);
-        //fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.commit();
-
-        /*
-        CalculatorFragment newFragment = new CalculatorFragment();
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        // Replace whatever is in the fragment_container view with this fragment,
-        // and add the transaction to the back stack so the user can navigate back
-        transaction.replace(R.id.fragmentContainer, newFragment);
-        //transaction.addToBackStack(null); // to get back from ListFragment
-        // Commit the transaction
-        transaction.commit();
-        */
+        // Open calculator fragment first
+        openCalculatorFragment(null);
     }
 
     @Override
@@ -88,7 +71,18 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         CurrencyListFragment listFragment = new CurrencyListFragment();
 
-        transaction.addToBackStack(null);
-        transaction.add(R.id.content_main, listFragment).commit();
+        //transaction.addToBackStack(null);
+        transaction.replace(R.id.content_main, listFragment, listFragment.TAG).commit();
+    }
+
+    public void openCalculatorFragment(Currency currency) {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(CalculatorFragment.ACTIVE_CURRENCY, currency);
+
+        CalculatorFragment calculatorFragment = new CalculatorFragment();
+        calculatorFragment.setArguments(bundle);
+
+        transaction.replace(R.id.content_main, calculatorFragment).commit();
     }
 }
