@@ -34,6 +34,8 @@ public class CurrencyRepository {
         return mCurrencyDao.getCurrencyById();
     }
 
+    public void insertMultiple(List<Currency> currencyList) { new insertMultipleAsyncTask(mCurrencyDao).execute(currencyList); }
+
     private static class getCurrencyAsyncTask extends AsyncTask<Integer, Void, Currency> {
 
         private CurrencyDao mAsyncTaskDao;
@@ -56,6 +58,21 @@ public class CurrencyRepository {
         @Override
         protected Void doInBackground(final Currency... params) {
             mAsyncTaskDao.insert(params[0]);
+            return null;
+        }
+    }
+
+    private static class insertMultipleAsyncTask extends AsyncTask<List<Currency>, Void, Void> {
+        private CurrencyDao mAsyncTaskDao;
+        insertMultipleAsyncTask(CurrencyDao dao) {
+            mAsyncTaskDao = dao;
+        }
+        @Override
+        protected Void doInBackground(final List<Currency>... params) {
+            mAsyncTaskDao.deleteAll();
+            for (Currency curr: params[0]) {
+                mAsyncTaskDao.insert(curr);
+            }
             return null;
         }
     }

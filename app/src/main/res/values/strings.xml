@@ -10,4 +10,5 @@
     <string name="amountText">Amount</string>
     <string name="testText">Test</string>
     <string name="lower_calc_text">None</string>
+    <string name="action_update">Update Currencies</string>
 </resources>
