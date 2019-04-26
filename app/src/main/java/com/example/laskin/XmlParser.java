@@ -1,13 +1,9 @@
 package com.example.laskin;
 
-import android.util.Log;
 import android.util.Xml;
-
 import com.example.laskin.entity.Currency;
-
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;

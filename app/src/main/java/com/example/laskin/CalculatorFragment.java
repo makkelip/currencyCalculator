@@ -1,6 +1,5 @@
 package com.example.laskin;
 
-import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -13,7 +12,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.laskin.entity.Currency;
-import com.example.laskin.room.CurrencyViewModel;
 
 import java.util.Locale;
 
@@ -22,8 +20,6 @@ public class CalculatorFragment extends Fragment {
 
     public static final String ACTIVE_CURRENCY = "active_currency";
     public static final String TAG = "CalculatorFragment";
-
-    private CurrencyViewModel viewModel;
 
     private TextView lowerText;
     private EditText upperEditText;
@@ -40,7 +36,6 @@ public class CalculatorFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_calculator, container, false);
-        viewModel = ViewModelProviders.of(this).get(CurrencyViewModel.class);
 
         lowerText = view.findViewById(R.id.lowerTextView);
         upperEditText = view.findViewById(R.id.upperInput);

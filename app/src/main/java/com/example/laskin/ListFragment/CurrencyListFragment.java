@@ -1,18 +1,14 @@
 package com.example.laskin.ListFragment;
 
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
-import com.example.laskin.CalculatorFragment;
 import com.example.laskin.MainActivity;
 import com.example.laskin.R;
 import com.example.laskin.entity.Currency;
@@ -80,13 +76,5 @@ public class CurrencyListFragment extends Fragment {
         }));
 
         return view;
-    }
-
-    public void openCalculatorFragment(Intent intent) {
-        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-        CalculatorFragment calculatorFragment = new CalculatorFragment();
-
-        transaction.addToBackStack(null);
-        transaction.replace(R.id.content_main, calculatorFragment).commit();
     }
 }

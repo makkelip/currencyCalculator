@@ -3,7 +3,6 @@ package com.example.laskin.entity;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
-
 import java.io.Serializable;
 
 @Entity(tableName = "currencies")
