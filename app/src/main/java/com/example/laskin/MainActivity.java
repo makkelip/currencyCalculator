@@ -1,9 +1,9 @@
 package com.example.laskin;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.DocumentsContract;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -11,32 +11,20 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
-
 import com.example.laskin.ListFragment.CurrencyListFragment;
 import com.example.laskin.entity.Currency;
 import com.example.laskin.room.CurrencyViewModel;
-
-import org.xml.sax.helpers.XMLReaderAdapter;
 import org.xmlpull.v1.XmlPullParserException;
-
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.List;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
-    private static final int LIST_REQ_CODE = 1;
-    private static final String SELECTION_INDEX = "index";
+    private static final int ADD_REQ_CODE = 1;
 
     private CurrencyViewModel currencyViewModel;
 
@@ -72,6 +60,9 @@ public class MainActivity extends AppCompatActivity {
             openListFragment();
         } else if (id == R.id.action_update) {
             new DownloadCurrenciesTask().execute("https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml");
+        } else if (id == R.id.action_add) {
+            Intent intent = new Intent(this, AddCurrencyActivity.class);
+            startActivityForResult(intent, ADD_REQ_CODE);
         } else if (id == R.id.action_settings) {
             return true;
         }

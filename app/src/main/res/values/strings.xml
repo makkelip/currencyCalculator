@@ -11,4 +11,10 @@
     <string name="testText">Test</string>
     <string name="lower_calc_text">None</string>
     <string name="action_update">Update Currencies</string>
+    <string name="title_activity_add_currency">AddCurrency</string>
+    <string name="currency_name">Currency name</string>
+    <string name="relation_text">Relation</string>
+    <string name="date_of_input">Date of input</string>
+    <string name="add_btn_text">Add</string>
+    <string name="add_currency_text">Add currency</string>
 </resources>
