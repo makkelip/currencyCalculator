@@ -12,7 +12,6 @@ public class CurrencyViewModel extends AndroidViewModel {
 
     private CurrencyRepository mRepository;
     private LiveData<List<Currency>> mAllCurrencies;
-    private LiveData<Currency> activeCurrency;
 
     public CurrencyViewModel (Application application) {
         super(application);
@@ -22,17 +21,9 @@ public class CurrencyViewModel extends AndroidViewModel {
 
     public LiveData<List<Currency>> getAllCurrencies() { return mAllCurrencies; }
 
-    public Currency getCurrencyById() {
-        return mRepository.getCurrencyById();
-    }
-
     public void insert(Currency c) { mRepository.insert(c); }
 
     public void delete(int id) { mRepository.delete(id); }
-
-    public LiveData<Currency> getActiveCurrency() {
-        return activeCurrency;
-    }
 
     public void insertMultiple(List<Currency> currencyList) { mRepository.insertMultiple(currencyList); }
 }

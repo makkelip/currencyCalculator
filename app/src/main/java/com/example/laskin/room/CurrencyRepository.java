@@ -30,25 +30,7 @@ public class CurrencyRepository {
 
     public void delete (int id) { new deleteAsyncTask(mCurrencyDao).execute(id); }
 
-    public Currency getCurrencyById() {
-        return mCurrencyDao.getCurrencyById();
-    }
-
     public void insertMultiple(List<Currency> currencyList) { new insertMultipleAsyncTask(mCurrencyDao).execute(currencyList); }
-
-    private static class getCurrencyAsyncTask extends AsyncTask<Integer, Void, Currency> {
-
-        private CurrencyDao mAsyncTaskDao;
-
-        getCurrencyAsyncTask(CurrencyDao dao) {
-            mAsyncTaskDao = dao;
-        }
-
-        @Override
-        protected Currency doInBackground(final Integer... params) {
-            return mAsyncTaskDao.getCurrencyById();
-        }
-    }
 
     private static class insertAsyncTask extends AsyncTask<Currency, Void, Void> {
         private CurrencyDao mAsyncTaskDao;
@@ -69,9 +51,11 @@ public class CurrencyRepository {
         }
         @Override
         protected Void doInBackground(final List<Currency>... params) {
-            mAsyncTaskDao.deleteAll();
+            Currency dbCurr;
             for (Currency curr: params[0]) {
-                mAsyncTaskDao.insert(curr);
+                dbCurr = mAsyncTaskDao.getCurrencyByName(curr.getCurrencyName());
+                if (dbCurr == null)
+                    mAsyncTaskDao.insert(curr);
             }
             return null;
         }

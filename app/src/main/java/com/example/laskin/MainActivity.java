@@ -89,23 +89,6 @@ public class MainActivity extends AppCompatActivity {
         transaction.replace(R.id.content_main, calculatorFragment).commit();
     }
 
-
-    private void updateDatabaseByXML(InputStream stream) throws IOException, XmlPullParserException {
-        XmlParser parser = new XmlParser();
-        List<Currency> currencyList;
-
-        try {
-            currencyList = parser.parse(stream);
-        } finally {
-            if (stream != null) {
-                stream.close();
-            }
-        }
-        Log.d(TAG, "Size of curr list: " + String.valueOf(currencyList.size()));
-
-        currencyViewModel.insertMultiple(currencyList);
-    }
-
     // Uses AsyncTask to create a task away from the main UI thread. This task takes a
     // URL string and uses it to create an HttpUrlConnection. Once the connection
     // has been established, the AsyncTask downloads the contents of the webpage as
@@ -114,11 +97,17 @@ public class MainActivity extends AppCompatActivity {
     private class DownloadCurrenciesTask extends AsyncTask<String, Void, Void> {
         @Override
         protected Void doInBackground(String... url) {
-
+            InputStream stream;
             // params comes from the execute() call: params[0] is the url.
             try {
-                InputStream stream = downLoadUrl(url[0]);
-                updateDatabaseByXML(stream);
+                stream = downLoadUrl(url[0]);
+                XmlParser parser = new XmlParser();
+                List<Currency> currencyList;
+
+                currencyList = parser.parse(stream);
+                currencyViewModel.insertMultiple(currencyList);
+
+                stream.close();
             } catch (IOException e) {
                 return null;
             } catch (XmlPullParserException e) {
