@@ -4,7 +4,9 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.ListFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -38,7 +40,15 @@ public class MainActivity extends AppCompatActivity {
         currencyViewModel = ViewModelProviders.of(this).get(CurrencyViewModel.class);
 
         // Open calculator fragment first
-        openCalculatorFragment(null);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(CalculatorFragment.ACTIVE_CURRENCY, null);
+
+        CalculatorFragment calculatorFragment = new CalculatorFragment();
+        calculatorFragment.setArguments(bundle);
+
+        transaction.replace(R.id.content_main, calculatorFragment)
+                .commit();
     }
 
     @Override
@@ -71,22 +81,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void openListFragment() {
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        CurrencyListFragment listFragment = new CurrencyListFragment();
+        if (getSupportFragmentManager().getBackStackEntryCount() < 1) {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            CurrencyListFragment listFragment = new CurrencyListFragment();
 
-        //transaction.addToBackStack(null);
-        transaction.replace(R.id.content_main, listFragment, listFragment.TAG).commit();
+            transaction.replace(R.id.content_main, listFragment)
+                    .addToBackStack(CurrencyListFragment.TAG)
+                    .commit();
+        }
     }
 
     public void openCalculatorFragment(Currency currency) {
+        getSupportFragmentManager().popBackStack(); //Remove list fragment from stack
+
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         Bundle bundle = new Bundle();
         bundle.putSerializable(CalculatorFragment.ACTIVE_CURRENCY, currency);
 
         CalculatorFragment calculatorFragment = new CalculatorFragment();
         calculatorFragment.setArguments(bundle);
-
-        transaction.replace(R.id.content_main, calculatorFragment).commit();
+        transaction.replace(R.id.content_main, calculatorFragment)
+                .commit();
     }
 
     // Uses AsyncTask to create a task away from the main UI thread. This task takes a

@@ -21,7 +21,7 @@ public class CalculatorFragment extends Fragment {
 
 
     public static final String ACTIVE_CURRENCY = "active_currency";
-    private static final String TAG = "CalculatorFragment";
+    public static final String TAG = "CalculatorFragment";
 
     private CurrencyViewModel viewModel;
 
