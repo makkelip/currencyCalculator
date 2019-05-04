@@ -47,6 +47,9 @@ public class MainActivity extends AppCompatActivity {
 
         transaction.replace(R.id.content_main, calculatorFragment)
                 .commit();
+
+        // Download currencies
+        new DownloadCurrenciesTask().execute("https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml");
     }
 
     @Override
