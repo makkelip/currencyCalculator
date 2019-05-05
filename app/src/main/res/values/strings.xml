@@ -17,4 +17,6 @@
     <string name="date_of_input">Date of input</string>
     <string name="add_btn_text">Add</string>
     <string name="add_currency_text">Add currency</string>
+    <string name="change_text">Change</string>
+    <string name="none_text">None</string>
 </resources>

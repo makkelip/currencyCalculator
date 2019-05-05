@@ -28,6 +28,9 @@ public class MainActivity extends AppCompatActivity {
 
     private CurrencyViewModel currencyViewModel;
 
+    private Currency upperCurrency;
+    private Currency lowerCurrency;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,16 +43,14 @@ public class MainActivity extends AppCompatActivity {
         // Open calculator fragment first
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         Bundle bundle = new Bundle();
-        bundle.putSerializable(CalculatorFragment.ACTIVE_CURRENCY, null);
+        bundle.putSerializable(CalculatorFragment.UPPER_CURRENCY, null);
+        bundle.putSerializable(CalculatorFragment.LOWER_CURRENCY, null);
 
         CalculatorFragment calculatorFragment = new CalculatorFragment();
         calculatorFragment.setArguments(bundle);
 
         transaction.replace(R.id.content_main, calculatorFragment)
                 .commit();
-
-        // Download currencies
-        new DownloadCurrenciesTask().execute("https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml");
     }
 
     @Override
@@ -66,24 +67,24 @@ public class MainActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        if (id == R.id.action_list) {
-            openListFragment();
-        } else if (id == R.id.action_update) {
+        if (id == R.id.action_update) {
             new DownloadCurrenciesTask().execute("https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml");
         } else if (id == R.id.action_add) {
             Intent intent = new Intent(this, AddCurrencyActivity.class);
             startActivityForResult(intent, ADD_REQ_CODE);
-        } else if (id == R.id.action_settings) {
-            return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    public void openListFragment() {
+    public void openListFragment(String position) {
         if (getSupportFragmentManager().getBackStackEntryCount() < 1) {
+            Bundle bundle = new Bundle();
+            bundle.putString(CurrencyListFragment.UPDATE_POS, position);
+
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             CurrencyListFragment listFragment = new CurrencyListFragment();
+            listFragment.setArguments(bundle);
 
             transaction.replace(R.id.content_main, listFragment)
                     .addToBackStack(CurrencyListFragment.TAG)
@@ -91,13 +92,18 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void openCalculatorFragment(Currency currency) {
+    public void openCalculatorFragment(Currency upper, Currency lower) {
         getSupportFragmentManager().popBackStack(); //Remove list fragment from stack
 
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        if (upper != null)
+            upperCurrency = upper;
+        if (lower != null)
+            lowerCurrency = lower;
         Bundle bundle = new Bundle();
-        bundle.putSerializable(CalculatorFragment.ACTIVE_CURRENCY, currency);
+        bundle.putSerializable(CalculatorFragment.UPPER_CURRENCY, upperCurrency);
+        bundle.putSerializable(CalculatorFragment.LOWER_CURRENCY, lowerCurrency);
 
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         CalculatorFragment calculatorFragment = new CalculatorFragment();
         calculatorFragment.setArguments(bundle);
         transaction.replace(R.id.content_main, calculatorFragment)
@@ -120,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
                 List<Currency> currencyList;
 
                 currencyList = parser.parse(stream);
+                currencyList.add(new Currency("EUR", (double) 1));
                 currencyViewModel.insertMultiple(currencyList);
 
                 stream.close();

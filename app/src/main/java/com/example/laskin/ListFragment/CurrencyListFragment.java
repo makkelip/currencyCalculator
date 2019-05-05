@@ -9,6 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
+import com.example.laskin.CalculatorFragment;
 import com.example.laskin.MainActivity;
 import com.example.laskin.R;
 import com.example.laskin.entity.Currency;
@@ -21,9 +23,12 @@ import com.example.laskin.room.CurrencyViewModel;
 public class CurrencyListFragment extends Fragment {
 
     public static final String TAG = "CurrencyListFragment";
+    public static final String UPDATE_POS = "position of update";
+
     private CurrencyListAdapter listAdapter;
     private CurrencyViewModel mViewModel;
-    private RecyclerView recyclerView;
+
+    private String updatePos;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -40,6 +45,12 @@ public class CurrencyListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        Bundle args = getArguments();
+        if (args != null) {
+            updatePos = args.getString(UPDATE_POS);
+        }
+
         listAdapter = new CurrencyListAdapter(inflater.getContext());
         mViewModel = ViewModelProviders.of(this).get(CurrencyViewModel.class);
 
@@ -48,7 +59,7 @@ public class CurrencyListFragment extends Fragment {
         });
 
         View view = inflater.inflate(R.layout.fragment_currency_list, container, false);
-        recyclerView = view.findViewById(R.id.currency_recycle_view);
+        RecyclerView recyclerView = view.findViewById(R.id.currency_recycle_view);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(RecyclerView.VERTICAL);
         recyclerView.setLayoutManager(linearLayoutManager);
@@ -61,7 +72,14 @@ public class CurrencyListFragment extends Fragment {
                         Currency currency = listAdapter.getCurrency(position);
                         try {
                             MainActivity main = (MainActivity)getActivity();
-                            main.openCalculatorFragment(currency);
+
+                            if (updatePos.equals(CalculatorFragment.LOWER_CURRENCY))
+                                main.openCalculatorFragment(null, currency);
+                            else if (updatePos.equals(CalculatorFragment.UPPER_CURRENCY))
+                                main.openCalculatorFragment(currency, null);
+                            else
+                                main.openCalculatorFragment(null, null);
+
                         } catch (Exception e) {
                             throw new ClassCastException(getActivity().toString() + "Activity is other than MainActivity");
                         }

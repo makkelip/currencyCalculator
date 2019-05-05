@@ -1,9 +1,12 @@
 package com.example.laskin.entity;
 
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.Calendar;
 
 @Entity(tableName = "currencies")
 public class Currency implements Serializable {
@@ -23,6 +26,14 @@ public class Currency implements Serializable {
         this.currencyName = currencyName;
         this.currencyRelation = currencyRelation;
         this.currencyDate = currencyDate;
+    }
+
+    @Ignore
+    public Currency(String currencyName, Double currencyRelation) {
+        this.currencyName = currencyName;
+        this.currencyRelation = currencyRelation;
+        LocalDateTime date = LocalDateTime.now();
+        this.currencyDate = date.getYear()  + "-" + date.getMonth().getValue() + "-" + date.getDayOfMonth();
     }
 
     public int getCurrencyId() {

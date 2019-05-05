@@ -13,19 +13,24 @@ import android.widget.Toast;
 
 import com.example.laskin.entity.Currency;
 
+import org.w3c.dom.Text;
+
 import java.util.Locale;
 
 public class CalculatorFragment extends Fragment {
 
 
-    public static final String ACTIVE_CURRENCY = "active_currency";
+    public static final String UPPER_CURRENCY = "upper_currency";
+    public static final String LOWER_CURRENCY = "lower_currency";
     public static final String TAG = "CalculatorFragment";
 
+    private TextView upperText;
     private TextView lowerText;
     private EditText upperEditText;
     private EditText lowerEditText;
 
-    private Currency activeCurrency;
+    private Currency upperCurrency;
+    private Currency lowerCurrency;
 
     public CalculatorFragment() {
         // Required empty public constructor
@@ -37,33 +42,46 @@ public class CalculatorFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_calculator, container, false);
 
+        upperText = view.findViewById(R.id.upperTextView);
         lowerText = view.findViewById(R.id.lowerTextView);
         upperEditText = view.findViewById(R.id.upperInput);
         lowerEditText = view.findViewById(R.id.lowerInput);
 
         // Bind functions to buttons
-        Button testButton = view.findViewById(R.id.testButton);
-        testButton.setOnClickListener(v -> test(v));
         Button calculateButton = view.findViewById(R.id.calculateButton);
         calculateButton.setOnClickListener(v -> onCalculate(v));
 
-        //Set active currency
-        if (getArguments().getSerializable(ACTIVE_CURRENCY) != null) {
-            activeCurrency = (Currency) getArguments().getSerializable(ACTIVE_CURRENCY);
-            lowerText.setText(activeCurrency.getCurrencyName());
-        } else {
-            Log.e(TAG, "No active currency given in arguments");
+        MainActivity main = (MainActivity)getActivity();
+
+        Button upperChangeButton = view.findViewById(R.id.upperChangeButton);
+        upperChangeButton.setOnClickListener(v -> main.openListFragment(UPPER_CURRENCY));
+
+        Button lowerChangeButton = view.findViewById(R.id.lowerChangeButton);
+        lowerChangeButton.setOnClickListener(v -> main.openListFragment(LOWER_CURRENCY));
+
+        Bundle args = getArguments();
+        if (args == null) {
+            Log.e(TAG, "No currencies given in arguments");
+            return view;
+        }
+
+        //Set upper currency
+        if (args.getSerializable(UPPER_CURRENCY) != null) {
+            upperCurrency = (Currency) args.getSerializable(UPPER_CURRENCY);
+            upperText.setText(upperCurrency.getCurrencyName());
+        }
+
+        //Set lower currency
+        if (args.getSerializable(LOWER_CURRENCY) != null) {
+            lowerCurrency = (Currency) args.getSerializable(LOWER_CURRENCY);
+            lowerText.setText(lowerCurrency.getCurrencyName());
         }
 
         return view;
     }
 
-    public void test(View view) {
-        Toast.makeText(getContext(), "TEST", Toast.LENGTH_LONG).show();
-    }
-
     public void onCalculate(View view) {
-        if (activeCurrency == null) {
+        if (upperCurrency == null || lowerCurrency == null) {
             Toast.makeText(
                     getContext(),
                     "Unable to calculate. Currency missing",
@@ -71,19 +89,22 @@ public class CalculatorFragment extends Fragment {
             ).show();
             return;
         }
+
         String editText;
         if (upperEditText.hasFocus()) {
             editText = upperEditText.getText().toString();
             if (!editText.matches("")) {
                 double value = Double.parseDouble(editText);
-                value *= activeCurrency.getCurrencyRelation();
+                value /= upperCurrency.getCurrencyRelation();
+                value *= lowerCurrency.getCurrencyRelation();
                 lowerEditText.setText(String.format(Locale.US,"%.3f", value));
             }
         } else if (lowerEditText.hasFocus()) {
             editText = lowerEditText.getText().toString();
             if (!editText.matches("")) {
                 double value = Double.parseDouble(lowerEditText.getText().toString());
-                value /= activeCurrency.getCurrencyRelation();
+                value /= lowerCurrency.getCurrencyRelation();
+                value *= upperCurrency.getCurrencyRelation();
                 upperEditText.setText(String.format(Locale.US, "%.3f", value));
             }
         } else {

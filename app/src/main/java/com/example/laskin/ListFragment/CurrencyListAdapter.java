@@ -19,11 +19,13 @@ public class CurrencyListAdapter extends RecyclerView.Adapter<CurrencyListAdapte
     class CurrencyViewHolder extends RecyclerView.ViewHolder {
         private final TextView currencyNameView;
         private final TextView currencyRelationView;
+        private final TextView currencyDateView;
 
         private CurrencyViewHolder(View itemView) {
             super(itemView);
             currencyNameView = itemView.findViewById(R.id.currency_name);
             currencyRelationView = itemView.findViewById(R.id.currency_relation);
+            currencyDateView = itemView.findViewById(R.id.currency_date);
         }
     }
 
@@ -45,6 +47,7 @@ public class CurrencyListAdapter extends RecyclerView.Adapter<CurrencyListAdapte
             Currency current = mCurrencyList.get(i);
             currencyViewHolder.currencyNameView.setText(current.getCurrencyName());
             currencyViewHolder.currencyRelationView.setText(String.format(Locale.US,"%1$,.2f", current.getCurrencyRelation()));
+            currencyViewHolder.currencyDateView.setText(current.getCurrencyDate());
         } else {
             // Covers the case of data not being ready yet.
             currencyViewHolder.currencyNameView.setText("No Currency");

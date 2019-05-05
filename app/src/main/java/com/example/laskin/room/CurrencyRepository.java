@@ -39,7 +39,9 @@ public class CurrencyRepository {
         }
         @Override
         protected Void doInBackground(final Currency... params) {
-            mAsyncTaskDao.insert(params[0]);
+            Currency dbCurr = mAsyncTaskDao.getCurrencyByName(params[0].getCurrencyName());
+            if (dbCurr == null)
+                mAsyncTaskDao.insert(params[0]);
             return null;
         }
     }
