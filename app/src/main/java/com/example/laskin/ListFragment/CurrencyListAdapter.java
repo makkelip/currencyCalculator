@@ -11,10 +11,13 @@ import android.widget.TextView;
 import com.example.laskin.R;
 import com.example.laskin.entity.Currency;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 public class CurrencyListAdapter extends RecyclerView.Adapter<CurrencyListAdapter.CurrencyViewHolder> {
+
+    public static final String TAG = "CurrencyListAdapter";
 
     class CurrencyViewHolder extends RecyclerView.ViewHolder {
         private final TextView currencyNameView;
@@ -31,6 +34,7 @@ public class CurrencyListAdapter extends RecyclerView.Adapter<CurrencyListAdapte
 
     private final LayoutInflater mInflater;
     private List<Currency> mCurrencyList;
+    private List<Currency> mUnfilteredList;
 
     CurrencyListAdapter(Context context) { mInflater = LayoutInflater.from(context); }
 
@@ -54,8 +58,27 @@ public class CurrencyListAdapter extends RecyclerView.Adapter<CurrencyListAdapte
         }
     }
 
+    public void filter(String text) {
+        text = text.toLowerCase();
+        try {
+            List<Currency> newCurrencyList = mCurrencyList.getClass().newInstance();
+            newCurrencyList.clear();
+            for (Currency currency: mUnfilteredList) {
+                if(currency.getCurrencyName().toLowerCase().contains(text))
+                    newCurrencyList.add(currency);
+            }
+            mCurrencyList = newCurrencyList;
+            notifyDataSetChanged();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        }
+    }
+
     void setmCurrencyList(List<Currency> currencyList) {
         mCurrencyList = currencyList;
+        mUnfilteredList = new ArrayList<>(mCurrencyList);
         notifyDataSetChanged();
     }
 

@@ -2,6 +2,8 @@ package com.example.laskin;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +24,8 @@ public class CalculatorFragment extends Fragment {
 
     public static final String UPPER_CURRENCY = "upper_currency";
     public static final String LOWER_CURRENCY = "lower_currency";
+    public static final String UPPER_VALUE = "upper_value";
+    public static final String LOWER_VALUE = "lower_value";
     public static final String TAG = "CalculatorFragment";
 
     private TextView upperText;
@@ -48,16 +52,24 @@ public class CalculatorFragment extends Fragment {
         lowerEditText = view.findViewById(R.id.lowerInput);
 
         // Bind functions to buttons
+        MainActivity main = (MainActivity)getActivity();
+
         Button calculateButton = view.findViewById(R.id.calculateButton);
         calculateButton.setOnClickListener(v -> onCalculate(v));
 
-        MainActivity main = (MainActivity)getActivity();
-
         Button upperChangeButton = view.findViewById(R.id.upperChangeButton);
-        upperChangeButton.setOnClickListener(v -> main.openListFragment(UPPER_CURRENCY));
+        upperChangeButton.setOnClickListener(v -> {
+            main.setLowerValue(getValue(lowerEditText));
+            main.setUpperValue(getValue(upperEditText));
+            main.openListFragment(UPPER_CURRENCY);
+        });
 
         Button lowerChangeButton = view.findViewById(R.id.lowerChangeButton);
-        lowerChangeButton.setOnClickListener(v -> main.openListFragment(LOWER_CURRENCY));
+        lowerChangeButton.setOnClickListener(v -> {
+            main.setUpperValue(getValue(upperEditText));
+            main.setLowerValue(getValue(lowerEditText));
+            main.openListFragment(LOWER_CURRENCY);
+        });
 
         Bundle args = getArguments();
         if (args == null) {
@@ -71,13 +83,31 @@ public class CalculatorFragment extends Fragment {
             upperText.setText(upperCurrency.getCurrencyName());
         }
 
+        //Set upper value
+        double upperVal = args.getDouble(UPPER_VALUE);
+        upperEditText.setText(String.format(Locale.US,"%.3f", upperVal));
+
         //Set lower currency
         if (args.getSerializable(LOWER_CURRENCY) != null) {
             lowerCurrency = (Currency) args.getSerializable(LOWER_CURRENCY);
             lowerText.setText(lowerCurrency.getCurrencyName());
         }
 
+        //Set lower value
+        double lowerVal = args.getDouble(LOWER_VALUE);
+        lowerEditText.setText(String.format(Locale.US,"%.3f", lowerVal));
+
+        //Add formatter watcher for inputs
+        upperEditText.addTextChangedListener(createTextWatcher(upperEditText));
+        lowerEditText.addTextChangedListener(createTextWatcher(lowerEditText));
+
         return view;
+    }
+
+    private double getValue(EditText editText) {
+        String text = editText.getText().toString();
+        if (text.matches("")) return 0;
+        return Double.parseDouble(text);
     }
 
     public void onCalculate(View view) {
@@ -90,23 +120,16 @@ public class CalculatorFragment extends Fragment {
             return;
         }
 
-        String editText;
         if (upperEditText.hasFocus()) {
-            editText = upperEditText.getText().toString();
-            if (!editText.matches("")) {
-                double value = Double.parseDouble(editText);
-                value /= upperCurrency.getCurrencyRelation();
-                value *= lowerCurrency.getCurrencyRelation();
-                lowerEditText.setText(String.format(Locale.US,"%.3f", value));
-            }
+            double value = getValue(upperEditText);
+            value /= upperCurrency.getCurrencyRelation();
+            value *= lowerCurrency.getCurrencyRelation();
+            lowerEditText.setText(String.format(Locale.US,"%.3f", value));
         } else if (lowerEditText.hasFocus()) {
-            editText = lowerEditText.getText().toString();
-            if (!editText.matches("")) {
-                double value = Double.parseDouble(lowerEditText.getText().toString());
-                value /= lowerCurrency.getCurrencyRelation();
-                value *= upperCurrency.getCurrencyRelation();
-                upperEditText.setText(String.format(Locale.US, "%.3f", value));
-            }
+            double value = getValue(lowerEditText);
+            value /= lowerCurrency.getCurrencyRelation();
+            value *= upperCurrency.getCurrencyRelation();
+            upperEditText.setText(String.format(Locale.US, "%.3f", value));
         } else {
             Toast.makeText(
                     getContext(),
@@ -114,5 +137,28 @@ public class CalculatorFragment extends Fragment {
                     Toast.LENGTH_SHORT
             ).show();
         }
+    }
+
+    private TextWatcher createTextWatcher(EditText editText) {
+        return new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String input = s.toString();
+                if (input.matches("")) return;
+                int integerPlaces = input.indexOf('.');
+                int decimalPlaces = input.length() - integerPlaces - 1;
+                if (decimalPlaces > 3) {
+                    input = String.format(Locale.US, "%.3f", Double.valueOf(input));
+                    editText.setText(input);
+                    editText.setSelection(input.length());
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) { }
+        };
     }
 }

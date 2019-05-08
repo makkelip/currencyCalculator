@@ -30,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
 
     private Currency upperCurrency;
     private Currency lowerCurrency;
+    private double upperValue;
+    private double lowerValue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +79,22 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public double getUpperValue() {
+        return upperValue;
+    }
+
+    public void setUpperValue(double upperValue) {
+        this.upperValue = upperValue;
+    }
+
+    public double getLowerValue() {
+        return lowerValue;
+    }
+
+    public void setLowerValue(double lowerValue) {
+        this.lowerValue = lowerValue;
+    }
+
     public void openListFragment(String position) {
         if (getSupportFragmentManager().getBackStackEntryCount() < 1) {
             Bundle bundle = new Bundle();
@@ -99,9 +117,12 @@ public class MainActivity extends AppCompatActivity {
             upperCurrency = upper;
         if (lower != null)
             lowerCurrency = lower;
+
         Bundle bundle = new Bundle();
         bundle.putSerializable(CalculatorFragment.UPPER_CURRENCY, upperCurrency);
         bundle.putSerializable(CalculatorFragment.LOWER_CURRENCY, lowerCurrency);
+        bundle.putDouble(CalculatorFragment.UPPER_VALUE, upperValue);
+        bundle.putDouble(CalculatorFragment.LOWER_VALUE, lowerValue);
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         CalculatorFragment calculatorFragment = new CalculatorFragment();

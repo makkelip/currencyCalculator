@@ -19,4 +19,5 @@
     <string name="add_currency_text">Add currency</string>
     <string name="change_text">Change</string>
     <string name="none_text">None</string>
+    <string name="action_search">Search</string>
 </resources>

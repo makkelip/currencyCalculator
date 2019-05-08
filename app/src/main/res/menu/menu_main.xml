@@ -3,6 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.example.laskin.MainActivity">
     <item
+        android:id="@+id/action_search"
+        android:icon="@drawable/ic_search_black_24dp"
+        android:title="@string/action_search"
+        app:showAsAction="ifRoom"
+        android:visible="false"
+        app:actionViewClass="android.widget.SearchView" />
+    <item
         android:id="@+id/action_update"
         android:title="@string/action_update"
         app:showAsAction="never" />

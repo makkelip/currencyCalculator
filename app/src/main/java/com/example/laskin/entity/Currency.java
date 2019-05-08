@@ -4,9 +4,10 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Calendar;
 
 @Entity(tableName = "currencies")
 public class Currency implements Serializable {
@@ -34,6 +35,26 @@ public class Currency implements Serializable {
         this.currencyRelation = currencyRelation;
         LocalDateTime date = LocalDateTime.now();
         this.currencyDate = date.getYear()  + "-" + date.getMonth().getValue() + "-" + date.getDayOfMonth();
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        Currency c = (Currency) obj;
+
+        return currencyId == c.currencyId &&
+                currencyName.equals(c.currencyName) &&
+                currencyRelation.equals(c.currencyRelation) &&
+                !currencyDate.equals(c.currencyDate);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (currencyId ^ (currencyId >>> 32));
+        result = 31 * result + currencyName.hashCode();
+        return result;
     }
 
     public int getCurrencyId() {

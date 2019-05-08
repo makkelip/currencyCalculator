@@ -6,8 +6,12 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.example.laskin.CalculatorFragment;
@@ -20,7 +24,7 @@ import com.example.laskin.room.CurrencyViewModel;
  * A fragment representing a list of Items.
  * <p/>
  */
-public class CurrencyListFragment extends Fragment {
+public class CurrencyListFragment extends Fragment implements SearchView.OnQueryTextListener {
 
     public static final String TAG = "CurrencyListFragment";
     public static final String UPDATE_POS = "position of update";
@@ -72,7 +76,6 @@ public class CurrencyListFragment extends Fragment {
                         Currency currency = listAdapter.getCurrency(position);
                         try {
                             MainActivity main = (MainActivity)getActivity();
-
                             if (updatePos.equals(CalculatorFragment.LOWER_CURRENCY))
                                 main.openCalculatorFragment(null, currency);
                             else if (updatePos.equals(CalculatorFragment.UPPER_CURRENCY))
@@ -93,6 +96,28 @@ public class CurrencyListFragment extends Fragment {
                     }
         }));
 
+        setHasOptionsMenu(true);
+
         return view;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        final MenuItem searchItem = menu.findItem(R.id.action_search);
+        searchItem.setVisible(true);
+        final SearchView searchView = (SearchView) searchItem.getActionView();
+        searchView.setOnQueryTextListener(this);
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        listAdapter.filter(query);
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        listAdapter.filter(newText);
+        return true;
     }
 }
