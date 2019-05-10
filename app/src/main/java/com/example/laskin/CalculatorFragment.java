@@ -147,7 +147,7 @@ public class CalculatorFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String input = s.toString();
-                if (input.matches("")) return;
+                if (input.matches("") || !input.contains(".")) return;
                 int integerPlaces = input.indexOf('.');
                 int decimalPlaces = input.length() - integerPlaces - 1;
                 if (decimalPlaces > 3) {
